@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fbf1e4"/><stop offset="1" stop-color="#f0e0c6"/>
+</linearGradient>
+</defs>
+<rect width="400" height="400" fill="url(#bg)"/>
+
+<rect x="152" y="118" width="96" height="184" rx="14" fill="#7a4a24"/>
+<rect x="164" y="130" width="72" height="160" rx="8" fill="#a05f2c"/>
+<rect x="166" y="214" width="68" height="70" rx="6" fill="#f0d9a8"/>
+<rect x="160" y="96" width="80" height="30" rx="8" fill="#4a2d16"/>
+<rect x="176" y="72" width="48" height="30" rx="6" fill="#5d3a1c"/>
+<text x="200" y="256" font-family="Microsoft YaHei, PingFang SC, Hiragino Sans GB, sans-serif" font-size="26" font-weight="bold" fill="#7a4a24" text-anchor="middle">虾油</text>
+<rect x="170" y="140" width="16" height="120" rx="8" fill="#ffffff" opacity="0.14"/>
+
+</svg>

@@ -1,0 +1,407 @@
+/* ══════════════════════════════════════════════════════════════════
+   连江海味 · 设计系统
+   ──────────────────────────────────────────────────────────────────
+   设计语言：深海墨蓝 × 珍珠白 × 香槟金
+
+   三条底层原则（"高端"几乎都是这三条的结果）：
+   ① 深色打底，金色只做点缀。金色一旦泛滥立刻变俗 —— 只用在细描边、
+      徽章、分割线、图标描边上，面积占比控制在 5% 以内。
+   ② 层级靠字重/字号/字距拉开，不靠颜色堆砌。
+      字号阶梯 11 / 12 / 14 / 17 / 22 / 28，字重 400 / 500 / 600 / 700。
+   ③ 阴影一律"有色 + 大扩散 + 低透明"，绝不用黑色硬投影；
+      卡片额外加一条内高光（inset），模拟珍珠表面的一层反光。
+   ══════════════════════════════════════════════════════════════════ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* ── 深海色谱 ── */
+  --abyss:   #03101a;   /* 最底 */
+  --deep:    #06283a;
+  --mid:     #0b4a6f;
+  --shallow: #1a7fa8;
+  --foam:    #7fd4e8;   /* 浪花青 */
+  --mist:    #e8eef2;
+  --pearl:   #f7f9fa;   /* 珍珠白，比纯白更"贵" */
+  --ink:     #0a1a24;
+
+  /* ── 高级感的核心：香槟金 ── */
+  --gold:      #c9a961;
+  --gold-soft: #e5d4a1;
+  --gold-deep: #8b7444;
+  --hairline:      rgba(201, 169, 97, 0.16);
+  --hairline-soft: rgba(201, 169, 97, 0.09);
+
+  /* ── 强调色 ── */
+  /* coral 原本是橙红(#ff7a45)。这套深海+金的调性里橙红是最扎眼的一处，
+     所以把它拉回暖琥珀 —— 凡是用了 var(--coral) 的地方自动跟着变金。 */
+  --coral: #c99050;
+  /* 价格文字专用：赤金。比 --gold 深，白底上对比度够（≈5:1），小字不发虚。 */
+  --price: #9a7434;
+  /* 真·危险色：哑光砖红。只给「清空聊天记录 / 报错文案」这类，不是主操作色。 */
+  --brick: #b3453a;
+  --kelp:  #2a9d8f;
+
+  /* ── 圆角体系（统一分档，混用会显廉价） ── */
+  --r-xs: 8px;  --r-sm: 12px;  --r-md: 18px;
+  --r-lg: 24px; --r-xl: 32px;  --r-pill: 999px;
+
+  /* ── 光影（有色阴影 + 内高光） ── */
+  --sh-card:  0 18px 40px -14px rgba(2, 12, 20, 0.55), 0 2px 8px -2px rgba(2, 12, 20, 0.3);
+  --sh-float: 0 28px 60px -20px rgba(2, 12, 20, 0.7);
+  --sh-lift:  0 24px 48px -16px rgba(11, 74, 111, 0.45);
+  --inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  /* ── 动效曲线（统一，别一页一个感觉） ── */
+  --ease:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── 字体 ── */
+  --font-sans: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
+               "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  --font-num: "SF Pro Display", "DIN Alternate", "Helvetica Neue", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--abyss);
+  /* 刻意不设 color：全站既有"深底浅字"页，也有"浅底深字"页（客服/分类/我的/订单），
+     在 body 上定字色必然搞坏一边。文字颜色交给各页面自己定。 */
+}
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+img { max-width: 100%; display: block; }
+
+/* 数字统一用等宽数字，价格/销量对齐后立刻整齐 */
+.num, .price, .money, [class*="price"] {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Vant 主题变量：把组件库的默认色也拉进这套体系 ── */
+:root {
+  --van-primary-color: #0b7a9e;
+  --van-danger-color:  var(--brick);
+  --van-text-color:      #0a1a24;
+  --van-text-color-2:    #5b7a8c;
+  --van-border-color:    #e5ecf0;
+  --van-radius-md:       12px;
+  --van-radius-lg:       18px;
+}
+
+/* HTML/body 横向溢出治理：某个子元素把根容器撑宽时，
+   只在子容器上加 overflow-x:hidden 是无效的（它自己就是被撑大的那个），必须在根级截断 */
+html,
+body,
+#app {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════
+   底部导航：全站统一（深海玻璃 + 珍珠白选中）
+   ══════════════════════════════════════════ */
+.van-tabbar {
+  background: rgba(3, 16, 26, 0.86) !important;
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: 0 -1px 0 var(--hairline), 0 -12px 32px -12px rgba(0, 0, 0, 0.5);
+}
+/* 把 fixed 钉死。
+   首页实测：元素带着 van-tabbar--fixed、Vant 里也有该规则，但计算值仍是 relative ——
+   tabbar 于是跟着内容流排到了 6.5 屏之外，只有滚到底才看得到。 */
+.van-tabbar.van-tabbar--fixed {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+}
+.van-tabbar-item {
+  color: rgba(232, 238, 242, 0.42) !important;
+  background: transparent !important;
+  transition: color 0.3s var(--ease);
+}
+.van-tabbar-item--active { color: var(--foam) !important; }
+.van-tabbar-item__text {
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════
+   通用"高级感"基元 —— 各页面直接用，保证同一套语言
+   ══════════════════════════════════════════ */
+
+/* 珍珠卡片：珍珠白 + 金色发丝描边 + 内高光 */
+.pearl-card {
+  background: linear-gradient(160deg, #ffffff 0%, var(--pearl) 100%);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-card), var(--inner-hi);
+}
+
+/* 深色玻璃卡：深海半透明 + 金色发丝线 */
+.glass-card {
+  background: linear-gradient(155deg, rgba(11, 74, 111, 0.42), rgba(3, 16, 26, 0.62));
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: var(--sh-card), var(--inner-hi);
+}
+
+/* 区块标题：左边一根金色短竖线，不用 emoji 不用图标 */
+.sec-title {
+  position: relative;
+  padding-left: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+.sec-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--gold-soft), var(--gold-deep));
+}
+
+/* 金色发丝分割线：中间实、两端淡出 */
+.gold-rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--hairline), transparent);
+}
+
+/* 金色徽章（"直播中""地标""冷链"这类） */
+.gold-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: var(--gold-soft);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  background: rgba(201, 169, 97, 0.08);
+}
+
+/* 价格：货币符号缩小、数字放大 —— 电商里最直接的"贵气"信号 */
+.price-figure {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--coral);
+  letter-spacing: -0.2px;
+}
+.price-figure .cur { font-size: 0.62em; font-weight: 600; margin-right: 1px; }
+
+/* 点按反馈：统一缩放曲线 */
+.tap { transition: transform 0.26s var(--ease); }
+.tap:active { transform: scale(0.972); }
+
+/* 无障碍：尊重系统的"减少动态效果" */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   页面级统一：所有"浅底深字"页共用的语言
+   ──────────────────────────────────────────────────────────────────
+   首页/直播间是"深底浅字"，其余页面是"浅底深字"。
+   两边配色相反，但**质感必须一致**：珍珠冷白、金发丝描边、大圆角、
+   等宽数字。这样切页面不会觉得是两套东西。
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 页面底色：珍珠冷白，带极微弱的自上而下渐变（纯平白最显廉价） */
+.category-page, .mine-page, .orders-page, .cart-page, .detail-page,
+.chat-page, .discover-page, .coupons-page, .favorites-page, .message-page,
+.address-page, .feedback-page, .footprint-page, .about-page, .login-page,
+.pay-success-page, .scan-page, .msg-detail-page {
+  background: linear-gradient(180deg, #f8fbfc 0%, #eef5f9 100%) !important;
+  font-family: var(--font-sans);
+  color: #16323f;
+}
+
+/* ── 顶部导航栏：珍珠白 + 金发丝底边 + 深墨标题 ── */
+.van-nav-bar {
+  background: linear-gradient(180deg, #ffffff, #f8fbfc) !important;
+  box-shadow: 0 1px 0 var(--hairline);
+}
+.van-nav-bar__title {
+  color: #0f2c3a !important;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+.van-nav-bar .van-icon { color: #35515f !important; }
+.van-nav-bar__text { color: #0b7a9e !important; font-weight: 500; }
+.van-nav-bar::after { display: none !important; }
+
+/* ── 单元格 / 分组：白卡 + 大圆角 + 淡金分隔 ── */
+.van-cell {
+  color: #16323f;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  align-items: center;
+}
+.van-cell::after {
+  border-color: #eef4f7 !important;
+  left: 16px !important;
+  right: 16px !important;
+}
+.van-cell__title > span { color: #16323f; }
+.van-cell__value { color: #7f97a3; }
+.van-cell-group--inset {
+  border-radius: var(--r-lg) !important;
+  overflow: hidden;
+  box-shadow: 0 12px 28px -18px rgba(2, 12, 20, 0.35);
+}
+
+/* ── 按钮：主按钮走香槟金 ── */
+.van-button--primary {
+  background: linear-gradient(140deg, var(--gold-soft) 0%, var(--gold) 58%, var(--gold-deep) 100%) !important;
+  border: 0 !important;
+  color: #1a1206 !important;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  box-shadow: 0 14px 30px -14px rgba(201, 169, 97, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.van-button--danger {
+  background: linear-gradient(140deg, var(--gold-soft), var(--coral)) !important;
+  border: 0 !important;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  box-shadow: 0 14px 30px -14px rgba(201, 169, 97, 0.7);
+}
+.van-button--default {
+  border-color: #e3edf2 !important;
+  color: #35515f !important;
+  background: #fff !important;
+}
+.van-button--round { border-radius: var(--r-pill) !important; }
+
+/* ── 搜索框 ── */
+.van-search { background: transparent !important; }
+.van-search__content {
+  background: #f1f7fa !important;
+  border: 1px solid #e3eef3;
+  border-radius: var(--r-pill) !important;
+}
+.van-search__content .van-field__control::placeholder { color: #9db3bd; }
+
+/* ── 标签页：金色下划线 ── */
+.van-tabs__nav { background: transparent !important; }
+.van-tab {
+  color: #7f97a3 !important;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+}
+.van-tab--active { color: #0f2c3a !important; font-weight: 600; }
+.van-tabs__line {
+  background: linear-gradient(90deg, var(--gold-soft), var(--gold-deep)) !important;
+  height: 2.5px !important;
+  border-radius: 2px;
+}
+
+/* ── 标签 ── */
+.van-tag--primary {
+  background: rgba(11, 122, 158, 0.1) !important;
+  color: #0b6a86 !important;
+}
+.van-tag--success {
+  background: rgba(42, 157, 143, 0.12) !important;
+  color: #1d7a6e !important;
+}
+.van-tag--danger {
+  background: rgba(201, 169, 97, 0.12) !important;
+  color: var(--gold-deep) !important;
+}
+
+/* ── 表单 / 输入 ── */
+.van-field__control { color: #16323f !important; }
+.van-field__label { color: #5b7a8c !important; }
+.van-switch--on { background: var(--gold) !important; }
+.van-checkbox__icon--checked .van-icon,
+.van-radio__icon--checked .van-icon {
+  background: linear-gradient(140deg, var(--gold-soft), var(--gold)) !important;
+  border-color: var(--gold) !important;
+  color: #1a1206 !important;
+}
+
+/* ── 弹层 ── */
+.van-popup { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.van-dialog { border-radius: var(--r-lg); }
+.van-dialog__header { color: #0f2c3a; font-weight: 600; letter-spacing: 0.5px; }
+
+/* ── 空状态：字距拉开一点，别那么"系统默认" ── */
+.van-empty__description { color: #9db3bd; letter-spacing: 0.6px; font-size: 12.5px; }
+
+/* ── 步骤条 / 数量器 ── */
+.van-stepper__minus, .van-stepper__plus { border-radius: 8px !important; }
+
+/* ── 价格/数字统一等宽 ── */
+.van-card__price, .van-submit-bar__price {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--coral) !important;
+  font-weight: 700;
+}
+
+/* ── 提交栏 ── */
+.van-submit-bar {
+  background: rgba(247, 249, 250, 0.94) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 -1px 0 var(--hairline);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   danger 按钮收口
+   ──────────────────────────────────────────────────────────────────
+   本项目里 type="danger" 全用在「登录 / 提交反馈 / 新增地址 / 去逛逛 / 立即使用」
+   这类**主操作**上，没有一处是真正的危险操作（删除、清空）。
+   而且红色/橙色跟这套深海+金的调性完全不搭，所以统一按主按钮收口成香槟金。
+   ══════════════════════════════════════════════════════════════════ */
+.van-button--danger,
+.van-button--danger.van-button--plain,
+.van-button--warning {
+  background: linear-gradient(140deg, var(--gold-soft) 0%, var(--gold) 58%, var(--gold-deep) 100%) !important;
+  border: 0 !important;
+  color: #1a1206 !important;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  box-shadow: 0 14px 30px -14px rgba(201, 169, 97, 0.7);
+}
+.van-empty__bottom .van-button {
+  background: linear-gradient(140deg, var(--gold-soft) 0%, var(--gold) 58%, var(--gold-deep) 100%) !important;
+  border: 0 !important;
+  color: #1a1206 !important;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fdf6e6"/><stop offset="1" stop-color="#f5e6c4"/>
+</linearGradient>
+</defs>
+<rect width="400" height="400" fill="url(#bg)"/>
+
+<path d="M296 112 Q358 128 366 190 Q358 252 296 268" fill="none" stroke="#e0a83c" stroke-width="6" stroke-linejoin="round" opacity="0"/>
+<path d="M300 190 L372 138 L364 190 L372 242 Z" fill="#e8b44a"/>
+<path d="M104 190 Q140 110 220 108 Q300 108 320 190 Q300 272 220 272 Q140 270 104 190 Z" fill="#e0a83c"/>
+<path d="M112 190 Q146 122 220 120 Q292 120 312 190 Q292 260 220 260 Q146 258 112 190 Z" fill="#f2c95e"/>
+<path d="M180 116 Q200 74 240 82 Q222 106 216 124 Z" fill="#d99b30"/>
+<path d="M180 264 Q200 306 240 298 Q222 274 216 256 Z" fill="#d99b30"/>
+<circle cx="152" cy="170" r="14" fill="#fff"/><circle cx="152" cy="170" r="7" fill="#33302b"/>
+<g fill="#e0a83c" opacity="0.55">
+<path d="M170 192 L214 178 L214 202 Z"/><path d="M170 210 L214 224 L214 200 Z"/>
+<path d="M212 176 L256 166 L256 188 Z"/><path d="M212 226 L256 236 L256 214 Z"/>
+</g>
+
+</svg>
